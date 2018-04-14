@@ -6,12 +6,12 @@
  */
 
 //right side motor control
-int ctrl_IN1 = 7;
-int ctrl_IN2 = 6;
+int ctrl_IN1 = 8;
+int ctrl_IN2 = 9;
 int ctrl_ENABLE1 = 3; //enable right
 //left side motor control
-int ctrl_IN3 = 5;
-int ctrl_IN4 = 4;
+int ctrl_IN3 = 10;
+int ctrl_IN4 = 11;
 int ctrl_ENABLE2 = 2; //enable left
 int powered = 0;
 int flag = 0;
@@ -41,7 +41,7 @@ void testLoop(){
   rightTurn();
   delay(1000);
 }
-
+/**
 void startCar(){
   digitalWrite(ctrl_IN1, HIGH); //7,6,5,4
   digitalWrite(ctrl_IN2, LOW);
@@ -66,6 +66,38 @@ void rightTurn(){
   digitalWrite(ctrl_IN3, LOW);
   digitalWrite(ctrl_IN4, HIGH);
 }
+**/
+void startCar(){
+  digitalWrite(ctrl_IN1, LOW);
+  digitalWrite(ctrl_IN2, HIGH);
+  digitalWrite(ctrl_IN3, HIGH);
+  digitalWrite(ctrl_IN4, LOW);
+}
+void reverseCar(){
+  digitalWrite(ctrl_IN1, HIGH);
+  digitalWrite(ctrl_IN2, LOW);
+  digitalWrite(ctrl_IN3, LOW);
+  digitalWrite(ctrl_IN4, HIGH);
+}
+void leftTurn(){
+  digitalWrite(ctrl_IN1, HIGH); //7,6,5,4
+  digitalWrite(ctrl_IN2, LOW);
+  digitalWrite(ctrl_IN3, HIGH);
+  digitalWrite(ctrl_IN4, LOW);
+}
+void rightTurn(){
+  digitalWrite(ctrl_IN1, LOW);
+  digitalWrite(ctrl_IN2, HIGH);
+  digitalWrite(ctrl_IN3, LOW);
+  digitalWrite(ctrl_IN4, HIGH);
+}
+
+void stopCar(){
+  digitalWrite(ctrl_IN1, LOW);
+  digitalWrite(ctrl_IN2, LOW);
+  digitalWrite(ctrl_IN3, LOW);
+  digitalWrite(ctrl_IN4, LOW);
+}
 
 void loop(){
   if(Serial.available() > 0){
@@ -79,16 +111,19 @@ void loop(){
       break;
     case 'a':
       leftTurn();
-      Serial.println("Stop");
+      Serial.println("Left");
       break;
     case 's':
-      stopCar();
-      Serial.println("Left");
+      reverseCar();
+      Serial.println("Reverse");
       break;
     case 'd':
       rightTurn();
       Serial.println("Right");
       break;
+    case 'z':
+      stopCar();
+      Serial.println("Stop");
     default:
       stopCar();
       Serial.println("Stopped");

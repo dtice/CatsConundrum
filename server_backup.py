@@ -8,13 +8,13 @@ print("Searching for devices...")
 print("")
 #Create an array with all the MAC
 #addresses of the detected devices
-nearby_devices = bluetooth.discover_devices(duration=1)
+nearby_devices = bluetooth.discover_devices()
 #Run through all the devices found and list their name
 num = 0
 print("Select your device by entering its coresponding number...")
 for i in nearby_devices:
 	num+=1
-	print(num , ": " , bluetooth.lookup_name( i ), ":", nearby_devices[num - 1])
+	print(num , ": " , bluetooth.lookup_name( i ))
 
 #Allow the user to select their Arduino
 #bluetooth module. They must have paired
@@ -22,7 +22,7 @@ for i in nearby_devices:
 selection = int(input("> ")) - 1
 print("You have selected", bluetooth.lookup_name(nearby_devices[selection]))
 bd_addr = nearby_devices[selection]
-print(bd_addr)
+
 port = 1
 
 #Create the GUI
@@ -36,23 +36,17 @@ class Application(Frame):
     	#Close socket connection to device
         self.sock.close()
         
-    def on(self, event):
+    def on(self):
     	#Send 'H' which the Arduino
     	#detects as turning the light on
-        data = 'w'
+        data = "w"
         self.sock.send(data)
-        
-    def reverse(self, event):
-        self.sock.send('s')
-        
-    def left(self, event):
-        self.sock.send('a')
-        
-    def right(self, event):
-        self.sock.send('d')
-        
-    def stop(self, event):
-        self.sock.send('z')
+
+    def off(self):
+    	#Send 'L' to turn off the light
+    	#attached to the Arduino
+        data = "L"
+        self.sock.send(data)
         
     def throttle(self, amount):
         #TODO: Have throttle slider on GUI smoothly change speed variable on Arduino
@@ -83,7 +77,7 @@ class Application(Frame):
         self.turnOff = Button(self)
         self.turnOff["text"] = "Off"
         self.turnOff["fg"] = "red"
-        self.turnOff["command"] = self.stop
+        self.turnOff["command"] = self.off
         
         self.throttle2 = Scale(self, from_=100, to=0)
         
@@ -99,11 +93,6 @@ class Application(Frame):
     	#and initialize the GUI
         self.sock.connect((bd_addr, port))
         Frame.__init__(self, master)
-        self.master.bind('<Up>', self.on)
-        self.master.bind('<Down>', self.reverse)
-        self.master.bind('<Right>', self.right)
-        self.master.bind('<Left>', self.left)
-        self.master.bind('<z>', self.stop)
         self.grid(sticky=N+S+E+W)
         self.createWidgets()
 
